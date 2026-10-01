@@ -1,14 +1,15 @@
 .gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!gradlew
-!gradlew.bat
+gradlew
+gradlew.bat
 
 .idea/
 *.iml
 *.iws
 *.ipr
 out/
+lib/
 
 .classpath
 .project
