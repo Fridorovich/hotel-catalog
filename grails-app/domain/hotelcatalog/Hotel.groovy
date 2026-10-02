@@ -9,7 +9,10 @@ class Hotel {
     static belongsTo = [country: Country]
 
     static constraints = {
-        name blank: false, maxSize: 255, unique: 'country'
+        name blank: false, maxSize: 255, unique: 'country',
+                validator: { val, obj ->
+                    if (val != null && val.trim().isEmpty()) return ['blank']
+                }
         country nullable: false
         stars nullable: false, range: 1..5
         website nullable: true, maxSize: 255,

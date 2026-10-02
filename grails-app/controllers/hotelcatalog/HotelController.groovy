@@ -9,26 +9,12 @@ class HotelController {
         params.max = Math.min(params.int('max') ?: 10, 100)
         params.offset = params.int('offset') ?: 0
 
-        def criteria = Hotel.createCriteria()
-        def results = criteria.list(max: params.max, offset: params.offset) {
-            if (params.q) {
-                ilike('name', "%${params.q}%")
-            }
-            if (params.countryId) {
-                country { eq('id', params.long('countryId')) }
-            }
+        def results = Hotel.createCriteria().list(max: params.max, offset: params.offset) {
             order('stars', 'desc')
             order('name', 'asc')
         }
 
-        [
-                hotelList : results,
-                hotelCount: results.totalCount,
-                countries : Country.list(sort: 'name'),
-                q         : params.q,
-                countryId : params.countryId,
-                isSearch  : (params.q || params.countryId)
-        ]
+        [hotelList: results, hotelCount: results.totalCount, countries: Country.list(sort: 'name')]
     }
 
     @Transactional

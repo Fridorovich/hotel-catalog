@@ -22,6 +22,7 @@
 </head>
 <body>
 <nav>
+    <g:link controller="search" action="index">Поиск</g:link>
     <g:link controller="hotel" action="index">Отели</g:link>
     <g:link controller="country" action="index">Страны</g:link>
 </nav>

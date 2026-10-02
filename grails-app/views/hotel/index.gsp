@@ -6,54 +6,37 @@
 </head>
 <body>
 
-<h1>Поиск отелей</h1>
-
-<g:form controller="hotel" action="index" method="GET" class="filter">
-    <label>Название отеля:</label>
-    <g:textField name="q" value="${q}"/>
-
-    <label>Страна:</label>
-    <g:select name="countryId" from="${countries}" optionKey="id" optionValue="name"
-              value="${countryId}" noSelection="['': 'любая']"/>
-
-    <g:submitButton name="Найти" value="Найти"/>
-    <g:link controller="hotel" action="index" class="btn">Сброс</g:link>
-</g:form>
+<h1>Справочник отелей</h1>
 
 <p>
     <g:link controller="hotel" action="create" class="btn">Добавить новый отель</g:link>
 </p>
 
-<g:if test="${isSearch && hotelCount == 0}">
-    <p class="error">По Вашему запросу ничего не найдено</p>
-</g:if>
-
 <g:if test="${hotelCount > 0}">
-    <p>Найдено отелей: <b>${hotelCount}</b></p>
+    <p>Всего отелей: <b>${hotelCount}</b></p>
 
     <table>
         <thead>
         <tr>
             <th>Звездность</th>
             <th>Название</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         <g:each in="${hotelList}" var="h">
             <tr>
-                <td>${h.stars}</td>
+                <td><g:each in="${1..h.stars}"></g:each></td>
                 <td>
                     <div>${h.name} <small>(${h.country.name})</small></div>
                     <g:if test="${h.website}">
-                        <div>
-                            <a href="${h.website}" target="_blank" rel="noopener">Перейти на сайт</a>
-                        </div>
+                        <div><a href="${h.website}" target="_blank" rel="noopener">Перейти на сайт</a></div>
                     </g:if>
-                    <div class="actions">
-                        <g:link action="edit" id="${h.id}">Редактировать</g:link>
-                        <g:link action="delete" id="${h.id}"
-                                onclick="return confirm('Удалить отель?');">Удалить</g:link>
-                    </div>
+                </td>
+                <td class="actions">
+                    <g:link action="edit" id="${h.id}">Редактировать</g:link>
+                    <g:link action="delete" id="${h.id}"
+                            onclick="return confirm('Удалить отель?');">Удалить</g:link>
                 </td>
             </tr>
         </g:each>
@@ -62,9 +45,13 @@
 
     <div class="pagination">
         <g:if test="${hotelCount > params.int('max')}">
-            <g:paginate total="${hotelCount}" params="${[q: q, countryId: countryId]}"/>
+            <g:paginate total="${hotelCount}"/>
         </g:if>
     </div>
+</g:if>
+
+<g:if test="${hotelCount == 0}">
+    <p>Отелей пока нет. <g:link action="create">Добавить первый</g:link></p>
 </g:if>
 
 </body>
