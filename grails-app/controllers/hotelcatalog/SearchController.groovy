@@ -1,37 +1,34 @@
 package hotelcatalog
 
-import grails.gorm.transactions.Transactional
-
-@Transactional(readOnly = true)
 class SearchController {
 
+    SearchService searchService
+    CountryService countryService
+
     def index() {
-        [countries: Country.list(sort: 'name'), q: null, countryId: null]
+        [
+                countries        : countryService.listAllSorted(),
+                searchQuery      : null,
+                selectedCountryId: null
+        ]
     }
 
-    @Transactional
     def results() {
         params.max = Math.min(params.int('max') ?: 10, 100)
         params.offset = params.int('offset') ?: 0
 
-        def criteria = Hotel.createCriteria()
-        def results = criteria.list(max: params.max, offset: params.offset) {
-            if (params.q) {
-                ilike('name', "%${params.q}%")
-            }
-            if (params.countryId) {
-                country { eq('id', params.long('countryId')) }
-            }
-            order('stars', 'desc')
-            order('name', 'asc')
-        }
+        String searchQuery = params.q
+        Long selectedCountryId = params.countryId ? params.long('countryId') : null
+
+        List<Hotel> hotels = searchService.searchHotels(searchQuery, selectedCountryId, params)
+        int hotelCount = searchService.countHotels(searchQuery, selectedCountryId)
 
         [
-                hotelList : results,
-                hotelCount: results.totalCount,
-                countries : Country.list(sort: 'name'),
-                q         : params.q,
-                countryId : params.countryId
+                hotelList        : hotels,
+                hotelCount       : hotelCount,
+                countries        : countryService.listAllSorted(),
+                searchQuery      : searchQuery,
+                selectedCountryId: selectedCountryId
         ]
     }
 }

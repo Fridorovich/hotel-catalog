@@ -23,14 +23,14 @@
         </tr>
         </thead>
         <tbody>
-        <g:each in="${hotelList}" var="h">
+        <g:each in="${hotelList}" var="hotel">
             <tr>
-                <td><g:each in="${1..h.stars}">★</g:each></td>
+                <td><g:each in="${1..hotel.stars}">⭐</g:each></td>
                 <td>
-                    <div>${h.name} <small>(${h.country.name})</small></div>
-                    <g:if test="${h.website}">
+                    <div>${hotel.name} <small>(${hotel.country.name})</small></div>
+                    <g:if test="${hotel.website}">
                         <div>
-                            <a href="${h.website}" target="_blank" rel="noopener">Перейти на сайт</a>
+                            <a href="${hotel.website}" target="_blank" rel="noopener">Перейти на сайт</a>
                         </div>
                     </g:if>
                 </td>
@@ -41,7 +41,10 @@
 
     <div class="pagination">
         <g:if test="${hotelCount > params.int('max')}">
-            <g:paginate total="${hotelCount}" params="${[q: q, countryId: countryId]}"/>
+            <g:paginate total="${hotelCount}"
+                        params="${[q: searchQuery, countryId: selectedCountryId]}"
+                        prev="Назад"
+                        next="Вперёд"/>
         </g:if>
     </div>
 </g:if>

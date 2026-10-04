@@ -10,11 +10,15 @@
 
 <g:form controller="search" action="results" method="GET" class="filter">
     <label>Название отеля:</label>
-    <g:textField name="q" value="${q}"/>
+    <g:textField name="q" value="${searchQuery}"/>
 
     <label>Страна:</label>
-    <g:select name="countryId" from="${countries}" optionKey="id" optionValue="name"
-              value="${countryId}" noSelection="['': 'любая']"/>
+    <g:select name="countryId"
+              from="${countries}"
+              optionKey="id"
+              optionValue="name"
+              value="${selectedCountryId}"
+              noSelection="['': 'любая']"/>
 
     <g:submitButton name="Найти" value="Найти"/>
 </g:form>

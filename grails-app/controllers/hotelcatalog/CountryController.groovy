@@ -1,32 +1,32 @@
 package hotelcatalog
 
-import grails.gorm.transactions.Transactional
-
-@Transactional(readOnly = true)
 class CountryController {
+
+    CountryService countryService
 
     def index() {
         params.max = Math.min(params.int('max') ?: 10, 100)
         params.offset = params.int('offset') ?: 0
 
-        def criteria = Country.createCriteria()
-        def results = criteria.list(max: params.max, offset: params.offset) {
-            if (params.q) {
-                ilike('name', "%${params.q}%")
-            }
-            order('name', 'asc')
-        }
+        String searchQuery = params.q
 
-        [countryList: results, countryCount: results.totalCount, q: params.q]
+        List<Country> countries = countryService.searchCountries(searchQuery, params)
+        int countryCount = countryService.countCountries(searchQuery)
+
+        [
+                countryList : countries,
+                countryCount: countryCount,
+                searchQuery : searchQuery
+        ]
     }
 
-    @Transactional
-    def create() { [country: new Country()] }
+    def create() {
+        [country: new Country()]
+    }
 
-    @Transactional
     def save() {
-        def country = new Country(params)
-        if (!country.save()) {
+        Country country = countryService.createCountry(params)
+        if (!countryService.saveCountry(country)) {
             render(view: 'create', model: [country: country])
             return
         }
@@ -34,19 +34,24 @@ class CountryController {
         redirect(action: 'index')
     }
 
-    @Transactional
     def edit(Long id) {
-        def country = Country.get(id)
-        if (!country) { redirect(action: 'index'); return }
+        Country country = countryService.getCountry(id)
+        if (!country) {
+            redirect(action: 'index')
+            return
+        }
         [country: country]
     }
 
-    @Transactional
     def update(Long id) {
-        def country = Country.get(id)
-        if (!country) { redirect(action: 'index'); return }
+        Country country = countryService.getCountry(id)
+        if (!country) {
+            redirect(action: 'index')
+            return
+        }
+
         country.properties = params
-        if (!country.save()) {
+        if (!countryService.saveCountry(country)) {
             render(view: 'edit', model: [country: country])
             return
         }
@@ -54,17 +59,15 @@ class CountryController {
         redirect(action: 'index')
     }
 
-    @Transactional
     def delete(Long id) {
-        def country = Country.get(id)
-        if (!country) { redirect(action: 'index'); return }
-        if (country.hotels) {
+        if (countryService.hasHotels(id)) {
             flash.message = "Нельзя удалить страну, у которой есть отели"
             redirect(action: 'index')
             return
         }
-        country.delete(flush: true)
-        flash.message = "Страна удалена"
+        if (countryService.deleteCountry(id)) {
+            flash.message = "Страна удалена"
+        }
         redirect(action: 'index')
     }
 }

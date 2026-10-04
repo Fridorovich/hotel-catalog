@@ -6,8 +6,8 @@
 
 <g:hasErrors bean="${hotel}">
     <ul class="error">
-        <g:eachError bean="${hotel}" var="err">
-            <li><g:message error="${err}"/></li>
+        <g:eachError bean="${hotel}" var="error">
+            <li><g:message error="${error}"/></li>
         </g:eachError>
     </ul>
 </g:hasErrors>
@@ -15,8 +15,12 @@
 <g:form controller="hotel" action="save">
     <p><label>Название:</label> <g:textField name="name" value="${hotel?.name}"/></p>
     <p><label>Страна:</label>
-        <g:select name="country.id" from="${countries}" optionKey="id" optionValue="name"
-                  value="${hotel?.country?.id}" noSelection="['': '-- выберите --']"/>
+        <g:select name="country.id"
+                  from="${countries}"
+                  optionKey="id"
+                  optionValue="name"
+                  value="${hotel?.country?.id}"
+                  noSelection="['': '-- выберите --']"/>
     </p>
     <p><label>Звездность:</label>
         <g:select name="stars" from="${1..5}" value="${hotel?.stars}"/>

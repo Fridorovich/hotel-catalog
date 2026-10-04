@@ -6,8 +6,8 @@
 
 <g:hasErrors bean="${country}">
     <ul class="error">
-        <g:eachError bean="${country}" var="err">
-            <li><g:message error="${err}"/></li>
+        <g:eachError bean="${country}" var="error">
+            <li><g:message error="${error}"/></li>
         </g:eachError>
     </ul>
 </g:hasErrors>
