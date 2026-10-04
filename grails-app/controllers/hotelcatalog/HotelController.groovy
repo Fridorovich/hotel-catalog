@@ -1,10 +1,21 @@
 package hotelcatalog
 
+/**
+ * Контроллер справочника отелей и главной страницы (поиск).
+ */
 class HotelController {
 
     HotelService hotelService
     CountryService countryService
 
+    /**
+     * Главная страница + поиск
+     *
+     * Если параметры q / countryId не заданы - показываются первые 10 отелей
+     * Если заданы, то производится поиск по вхождению названия и/или фильтр по стране
+     *
+     * GET /
+     */
     def index() {
         params.max = Math.min(params.int('max') ?: 10, 100)
         params.offset = params.int('offset') ?: 0
@@ -16,19 +27,27 @@ class HotelController {
         int hotelCount = hotelService.countHotels(searchQuery, selectedCountryId)
 
         [
-                hotelList      : hotels,
-                hotelCount     : hotelCount,
-                countries      : countryService.listAllSorted(),
-                searchQuery    : searchQuery,
+                hotelList: hotels,
+                hotelCount: hotelCount,
+                countries: countryService.listAllSorted(),
+                searchQuery: searchQuery,
                 selectedCountryId: selectedCountryId,
-                isSearch       : (searchQuery || selectedCountryId)
+                isSearch: (searchQuery || selectedCountryId)
         ]
     }
 
+    /**
+     * Форма создания нового отеля
+     * GET /hotel/create
+     */
     def create() {
         [hotel: new Hotel(), countries: countryService.listAllSorted()]
     }
 
+    /**
+     * Сохранение нового отеля
+     * POST /hotel/save
+     */
     def save() {
         Hotel hotel = hotelService.createHotel(params)
         if (!hotelService.saveHotel(hotel)) {
@@ -39,6 +58,10 @@ class HotelController {
         redirect(action: 'index')
     }
 
+    /**
+     * Форма редактирования отеля
+     * GET /hotel/edit/{id}
+     */
     def edit(Long id) {
         Hotel hotel = hotelService.getHotel(id)
         if (!hotel) {
@@ -48,6 +71,10 @@ class HotelController {
         [hotel: hotel, countries: countryService.listAllSorted()]
     }
 
+    /**
+     * Сохранение изменений отеля
+     * POST /hotel/update/{id}
+     */
     def update(Long id) {
         Hotel hotel = hotelService.getHotel(id)
         if (!hotel) {
@@ -68,6 +95,10 @@ class HotelController {
         redirect(action: 'index')
     }
 
+    /**
+     * Удаление отеля
+     * POST/GET /hotel/delete/{id}
+     */
     def delete(Long id) {
         if (hotelService.deleteHotel(id)) {
             flash.message = "Отель удалён"

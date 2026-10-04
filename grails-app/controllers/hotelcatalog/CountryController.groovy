@@ -1,9 +1,16 @@
 package hotelcatalog
 
+/**
+ * Контроллер справочника стран.
+ */
 class CountryController {
 
     CountryService countryService
 
+    /**
+     * Список стран с пагинацией и фильтром по названию
+     * GET /country/index
+     */
     def index() {
         params.max = Math.min(params.int('max') ?: 10, 100)
         params.offset = params.int('offset') ?: 0
@@ -20,10 +27,19 @@ class CountryController {
         ]
     }
 
+    /**
+     * Форма создания новой страны
+     * GET /country/create
+     */
     def create() {
         [country: new Country()]
     }
 
+    /**
+     * Сохранение новой страны
+     * POST /country/save
+     * При ошибке валидации возвращает ту же форму с ошибками
+     */
     def save() {
         Country country = countryService.createCountry(params)
         if (!countryService.saveCountry(country)) {
@@ -34,6 +50,10 @@ class CountryController {
         redirect(action: 'index')
     }
 
+    /**
+     * Форма редактирования страны
+     * GET /country/edit/{id}
+     */
     def edit(Long id) {
         Country country = countryService.getCountry(id)
         if (!country) {
@@ -43,6 +63,10 @@ class CountryController {
         [country: country]
     }
 
+    /**
+     * Сохранение изменений страны
+     * POST /country/update/{id}
+     */
     def update(Long id) {
         Country country = countryService.getCountry(id)
         if (!country) {
@@ -59,6 +83,10 @@ class CountryController {
         redirect(action: 'index')
     }
 
+    /**
+     * Удаление страны
+     * Запрещено, если у страны есть отели
+     */
     def delete(Long id) {
         if (countryService.hasHotels(id)) {
             flash.message = "Нельзя удалить страну, у которой есть отели"
