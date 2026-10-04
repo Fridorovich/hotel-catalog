@@ -26,7 +26,7 @@
         <tbody>
         <g:each in="${hotelList}" var="h">
             <tr>
-                <td><g:each in="${1..h.stars}"></g:each></td>
+                <td><g:each in="${1..h.stars}" ⭐></g:each></td>
                 <td>
                     <div>${h.name} <small>(${h.country.name})</small></div>
                     <g:if test="${h.website}">
