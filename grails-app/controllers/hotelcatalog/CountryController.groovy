@@ -88,11 +88,6 @@ class CountryController {
      * Запрещено, если у страны есть отели
      */
     def delete(Long id) {
-        if (countryService.hasHotels(id)) {
-            flash.message = "Нельзя удалить страну, у которой есть отели"
-            redirect(action: 'index')
-            return
-        }
         if (countryService.deleteCountry(id)) {
             flash.message = "Страна удалена"
         }

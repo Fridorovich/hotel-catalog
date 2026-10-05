@@ -59,14 +59,6 @@ class CountryService {
     }
 
     /**
-     * Есть ли у страны отели
-     */
-    boolean hasHotels(Long id) {
-        def country = Country.get(id)
-        country?.hotels && !country.hotels.isEmpty()
-    }
-
-    /**
      * Создать новый объект Country из параметров
      */
     @Transactional
@@ -89,6 +81,7 @@ class CountryService {
     boolean deleteCountry(Long id) {
         def country = Country.get(id)
         if (!country) return false
+        country.hotels?.clear()
         country.delete(flush: true)
         true
     }

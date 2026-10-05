@@ -14,6 +14,7 @@ class Country {
 
     static mapping = {
         sort name: 'asc'
+        hotels cascade: 'all-delete-orphan'
     }
 
     String toString() { name }
